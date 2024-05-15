@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-
+double f1(double x);
+double f2(double x);
+double f3(double x);
 
 //c = a - (b-a)* f(a) / (f(b) - f(a))
 double root(double a, double b, double (*z1)(double), double (*z2)(double), double eps){
