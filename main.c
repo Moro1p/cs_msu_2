@@ -2,20 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-//f1 = e^x + 2
-double f1(double x){
-    return exp(x) + 2;
-}
 
-//f2 = -2x + 8
-double f2(double x){
-    return -2 * x + 8;
-}
-
-//f3 = -5/x
-double f3(double x){
-    return -5 / x;
-}
 
 //c = a - (b-a)* f(a) / (f(b) - f(a))
 double root(double a, double b, double (*z1)(double), double (*z2)(double), double eps){

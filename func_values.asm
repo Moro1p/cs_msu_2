@@ -5,10 +5,9 @@ f_in_double: dd `%lf`, 0
 f_out_double: dd `%lf\n`, 0
 
 section .text
-global main
-main:
-    xor eax, eax
-    ret
+global f1
+global f2
+global f3
     
 ;f1 = e^x + 2 = 2^(x*log2(e)) + 2
 f1:
@@ -23,16 +22,17 @@ f1:
     fld st1                 ;st0 = x*log2(e) , st1 = 1           
     fprem                   ;st0 = {x*log2(e)} , st1 = 1           
     f2xm1                   ;st0 = 2^{x*log2(e)} - 1 , st1 = 1     
-    faddp st1, st0          ;st0 = 2^{x*log2(e)}                                 
-    fscale                  ;st0 = 2*(2^{x*log2(e)} + 1)
+    fadd          ;st0 = 2^{x*log2(e)}                                 
+    fscale                  ;st0 = (2^{x*log2(e)} + 1)
 
     mov dword[esp], 2       
-    fild dword[esp]
+    ;fild dword[esp]
                                 
-    fadd         
+    ;fadd         
     
-    fstp qword[ebp+8]
-    xor eax, eax
+    fstp qword[esp]
+    mov eax, dword[esp+4]
+    mov edx, dword[esp]
     add esp, 16
     leave
     ret
@@ -52,9 +52,10 @@ f2:
    fild dword[esp]          ;st0 = 8 , st1 = -2x
    fadd                     ;st0 = -2x + 8
    
-   fstp qword[ebp+8]
+   fstp qword[esp]
+   mov eax, dword[esp+4]
+   mov edx, dword[esp]
    
-   xor eax, eax
    add esp, 16
    leave
    ret 
@@ -69,8 +70,9 @@ f3:
     fld qword[ebp+8]        ;st0 = x , st1 = -5
     fdiv                    ;st0 = -5/x
                             
-    fstp qword[ebp+8]
-    xor eax, eax
+    fstp qword[esp]
+    mov eax, dword[esp+4]
+    mov edx, dword[esp]
     add esp, 16
     leave
     ret
