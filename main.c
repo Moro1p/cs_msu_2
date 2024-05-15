@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 double f1(double x);
 double f2(double x);
@@ -69,17 +70,13 @@ double integral(double x1, double x2, double (*f)(double), double eps){
 
 int main(int argc, char **argv)
 {
-    char **commands = {
+    char *commands[] = {
         "-help",
         "-root",
         "-integral",
         "-area"
     };
-    double (**functions)(double) = {
-        f1,
-        f2,
-        f3
-    };
+    double (**functions)(double) = {f1, f2, f3};
 
     double eps1;
     double eps2;
