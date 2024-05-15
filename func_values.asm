@@ -26,9 +26,9 @@ f1:
     fscale                  ;st0 = (2^{x*log2(e)} + 1)
 
     mov dword[esp], 2       
-    ;fild dword[esp]
+    fild dword[esp]
                                 
-    ;fadd         
+    fadd         
     
     fstp qword[esp]
     mov eax, dword[esp+4]
