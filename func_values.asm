@@ -13,7 +13,6 @@ global f3
 f1:
     push ebp
     mov ebp, esp
-    sub esp, 16
     finit 
     fld qword[ebp+8]        ;st0 = x                           
     fldl2e                  ;st0 = log2(e) ,  st1 = x               
@@ -30,10 +29,7 @@ f1:
                                 
     fadd         
     
-    fstp qword[esp]
-    mov eax, dword[esp+4]
-    mov edx, dword[esp]
-    add esp, 16
+    xor eax, eax
     leave
     ret
    
@@ -41,7 +37,6 @@ f1:
 f2:
    push ebp
    mov ebp, esp
-   sub esp, 16
    finit
    fld qword[ebp+8];        ;st0 = x
    mov dword[esp], -2
@@ -52,11 +47,7 @@ f2:
    fild dword[esp]          ;st0 = 8 , st1 = -2x
    fadd                     ;st0 = -2x + 8
    
-   fstp qword[esp]
-   mov eax, dword[esp+4]
-   mov edx, dword[esp]
-   
-   add esp, 16
+   xor eax, eax
    leave
    ret 
 
@@ -64,16 +55,12 @@ f2:
 f3:
     push ebp
     mov ebp, esp
-    sub esp, 16
     mov dword[esp], -5      
     fild dword[esp]         ;st0 = -5
     fld qword[ebp+8]        ;st0 = x , st1 = -5
     fdiv                    ;st0 = -5/x
-                            
-    fstp qword[esp]
-    mov eax, dword[esp+4]
-    mov edx, dword[esp]
-    add esp, 16
+    
+    xor eax, eax
     leave
     ret
     
