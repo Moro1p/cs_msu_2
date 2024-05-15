@@ -67,37 +67,71 @@ double integral(double x1, double x2, double (*f)(double), double eps){
 }
 
 
-int main(void)
+int main(int argc, char **argv)
 {
-    double eps1 = 0.00025;
-    double eps2 = 0.000143;
+    char **commands = {
+        "-help",
+        "-root",
+        "-integral",
+        "-area"
+    };
+    double (**functions)(double) = {
+        f1,
+        f2,
+        f3
+    };
 
-    double x_12, x_13, x_23, y_12, y_13, y_23;
-    x_12 = root(1, 2, f1, f2, eps1);
-    x_13 = root(-3, -2, f1, f3, eps1);
-    x_23 = root(-1, -0.1, f2, f3, eps1);
-    y_12 = f1(x_12);
-    y_13 = f1(x_13);
-    y_23 = f2(x_23);
+    double eps1;
+    double eps2;
+    double x_12, x_13, x_23, y_12, y_13, y_23, a, b;
+    double I1, I2, I3;
+    int f, f_fst, f_sec;
 
-    double I1;
-    if(x_13 - x_12 > 0) I1 = integral(x_12, x_13, f1, eps2);
-    else I1 = integral(x_13, x_12, f1, eps2);
+    for(int i = 1; i < argc; i++){
+        if(!(strcmp(argv[i], "-help"))){
+            printf("-root <a> <b> <first function number> <second function number> <epsilon> : calculate root f1 - f2 = 0 on [a, b]\n");
+            printf("-integral <a> <b> <function number> <epsilon> : calculate integral of function on [a, b]\n");
+            printf("-area : calculate area of given functions\n");
+        }
+        else if(!(strcmp(argv[i], "-root")) && (argc > i + 5)){
+            a = atof(argv[i + 1]);
+            b = atof(argv[i + 2]);
+            f_fst = atoi(argv[i + 3]);
+            f_sec = atoi(argv[i + 4]);
+            eps1 = atof(argv[i + 5]);
+            printf("%lf", root(a, b, functions[f_fst - 1], functions[f_sec - 1], eps1));
+            i += 4;
+        }
+        else if(!(strcmp(argv[i], "-integral")) && (argc > i + 4)){
+            a = atof(argv[i + 1]);
+            b = atof(argv[i + 2]);
+            f = atoi(argv[i + 3]);
+            eps2 = atof(argv[i + 4]);
+            printf("lf", integral(a, b, functions[f - 1], eps2));
+            i += 3;
+        }
+        else if(!(strcmp(argv[i], "-area"))){
+            eps1 = 0.00025;
+            eps2 = 0.000143;
 
-    double I2;
-    if(x_23 - x_12 > 0) I2 = integral(x_12, x_23, f2, eps2);
-    else I2 = integral(x_23, x_12, f2, eps2);
+            x_12 = root(1, 2, f1, f2, eps1);
+            x_13 = root(-3, -2, f1, f3, eps1);
+            x_23 = root(-1, -0.1, f2, f3, eps1);
+            y_12 = f1(x_12);
+            y_13 = f1(x_13);
+            y_23 = f2(x_23);
 
-    double I3;
-    if(x_23 - x_13 > 0) I3 = integral(x_13, x_23, f3, eps2);
-    else I3 = integral(x_23, x_13, f3, eps2);
+            if(x_13 - x_12 > 0) I1 = integral(x_12, x_13, f1, eps2);
+            else I1 = integral(x_13, x_12, f1, eps2);
 
-    printf("I1 = %.4lf\n", I1);
-    printf("I2 = %.4lf\n", I2);
-    printf("I3 = %.4lf\n", I3);
-    printf("a1 = %lf %lf\n", x_12, y_12);
-    printf("a2 = %lf %lf\n", x_13, y_13);
-    printf("a3 = %lf %lf\n", x_23, y_23);
-    printf("S = %lf", I2 + I3 - I1);
+            if(x_23 - x_12 > 0) I2 = integral(x_12, x_23, f2, eps2);
+            else I2 = integral(x_23, x_12, f2, eps2);
+
+            if(x_23 - x_13 > 0) I3 = integral(x_13, x_23, f3, eps2);
+            else I3 = integral(x_23, x_13, f3, eps2);
+
+            printf("S = %lf", I2 + I3 - I1);
+        }
+    }
     return 0;
 }
