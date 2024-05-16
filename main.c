@@ -132,8 +132,8 @@ int main(int argc, char **argv)
             f_fst = atoi(argv[i + 3]);
             f_sec = atoi(argv[i + 4]);
             eps1 = atof(argv[i + 5]);
-            if(mode_iterations) printf("number of iterations: %d\n", iterations);
             printf("the root of f%d and f%d functions on [%.4lf, %.4lf] is %lf\n", f_fst, f_sec, a, b, root(a, b, functions[f_fst - 1], functions[f_sec - 1], eps1));
+            if(mode_iterations) printf("number of iterations: %d\n", iterations);
             i += 4;
         }
 
