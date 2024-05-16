@@ -101,7 +101,7 @@ int main(int argc, char **argv)
     double x_12, x_13, x_23, a, b;
     double I1, I2, I3;
     int f, f_fst, f_sec;
-    int mode_iterations; //flag for "-iter" key
+    int mode_iterations; //flag for "-iters" key
     for(int i = 1; i < argc; i++){
         if(!(strcmp(argv[i], "-iters"))){
             mode_iterations = 1;
