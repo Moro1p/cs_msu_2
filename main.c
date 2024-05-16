@@ -3,6 +3,8 @@
 #include <math.h>
 #include <string.h>
 
+int iterations = 0;
+
 //f1 = e^x + 2
 double f1(double x);
 //f2 = -2x + 8
@@ -27,7 +29,7 @@ double f6(double x){
 
 //c = a - (b-a)* f(a) / (f(b) - f(a))
 double root(double a, double b, double (*z1)(double), double (*z2)(double), double eps){
-    int counter = 1; //counter for iterations
+    iterations = 1; //counter for iterations
     double y_a = z2(a) - z1(a);
     double y_b = z2(b) - z1(b);
     double y_mid = (y_a - y_b) / 2;
@@ -41,7 +43,7 @@ double root(double a, double b, double (*z1)(double), double (*z2)(double), doub
         double F_c_eps = z2(c + eps) - z1(c + eps); //F_c_eps = F(c + eps)
         //approximate value of root using chord method
         while((F_c > 0 && F_c_eps > 0) || (F_c < 0 && F_c_eps < 0)){
-            counter++;
+            iterations++;
             a = c;
             y_a = z2(a) - z1(a);
             y_b = z2(b) - z1(b);
@@ -53,7 +55,7 @@ double root(double a, double b, double (*z1)(double), double (*z2)(double), doub
     else{
         double F_c_eps = z2(c - eps) - z1(c - eps);
         while((F_c > 0 && F_c_eps > 0) || (F_c < 0 && F_c_eps < 0)){
-            counter++;
+            iterations++;
             b = c;
             y_a = z2(a) - z1(a);
             y_b = z2(b) - z1(b);
@@ -62,8 +64,6 @@ double root(double a, double b, double (*z1)(double), double (*z2)(double), doub
             F_c_eps = z2(c + eps) - z1(c + eps);
         }
     }
-
-    printf("number of iterations: %d\n", counter);
     return c;
 }
 
@@ -81,7 +81,7 @@ double integral(double x1, double x2, double (*f)(double), double eps){
         for(int i = 0; i < n; i++){ //count area of n trapezoids with height=h
             new_I += ((f(x1 + h * i) + f(x1 + h * (i + 1))) / 2) * h;
         }
-        if(new_I - I > 0) new_eps = new_I - I;  //count difference between new and old integrals
+        if(new_I > I) new_eps = new_I - I;  //count difference between new and old integrals
         else new_eps = I - new_I;
         I = new_I;
         n *= 2;
@@ -94,22 +94,25 @@ double integral(double x1, double x2, double (*f)(double), double eps){
 int main(int argc, char **argv)
 {
     char *names[] = {"e^x + 2", "-2x + 8", "-5/x", "x^2", "1000x", "2^x + 5"};
-    char *commands[] = {"-help", "-root", "-integral", "-area", "-list", "-test"};
     double (*functions[])(double) = {f1, f2, f3, f4, f5, f6};
 
     double eps1;
     double eps2;
-    double x_12, x_13, x_23, y_12, y_13, y_23, a, b;
+    double x_12, x_13, x_23, a, b;
     double I1, I2, I3;
     int f, f_fst, f_sec;
-
+    int mode_iterations; //flag for "-iter" key
     for(int i = 1; i < argc; i++){
+        if(!(strcmp(argv[i], "-iters"))){
+            mode_iterations = 1;
+        }
         if(!(strcmp(argv[i], "-help"))){
             printf("-root <a> <b> <first function number> <second function number> <epsilon> : calculate root f1 - f2 = 0 on [a, b]\n");
             printf("-integral <a> <b> <function number> <epsilon> : calculate integral of function on [a, b]\n");
+            printf("-test <a> <function number> : print f(a) \n");
             printf("-area : calculate area of given functions\n");
             printf("-list : print all available functions\n");
-            printf("-test <a> <function number> : print f(a) \n");
+            printf("-iters : enable printing number of iterations \n");
         }
 
         else if(!(strcmp(argv[i], "-list"))){
@@ -129,6 +132,7 @@ int main(int argc, char **argv)
             f_fst = atoi(argv[i + 3]);
             f_sec = atoi(argv[i + 4]);
             eps1 = atof(argv[i + 5]);
+            if(mode_iterations) printf("number of iterations: %d\n", iterations);
             printf("the root of f%d and f%d functions on [%.4lf, %.4lf] is %lf\n", f_fst, f_sec, a, b, root(a, b, functions[f_fst - 1], functions[f_sec - 1], eps1));
             i += 4;
         }
@@ -138,9 +142,9 @@ int main(int argc, char **argv)
             b = atof(argv[i + 2]);
             f = atoi(argv[i + 3]);
             eps2 = atof(argv[i + 4]);
-            if(b - a > 0) I1 = integral(a, b, functions[f - 1], eps2);
+            if(b > a) I1 = integral(a, b, functions[f - 1], eps2);
             else I1 = integral(b, a, functions[f - 1], eps2);
-            printf("Integral of f%d on [%lf, %lf] = %lf.3\n", f, a, b, I1);
+            printf("Integral of f%d on [%lf, %lf] = %lf\n", f, a, b, I1);
             i += 3;
         }
 
@@ -151,9 +155,6 @@ int main(int argc, char **argv)
             x_12 = root(1, 2, f1, f2, eps1);
             x_13 = root(-3, -2, f1, f3, eps1);
             x_23 = root(-1, -0.1, f2, f3, eps1);
-            y_12 = f1(x_12);
-            y_13 = f1(x_13);
-            y_23 = f2(x_23);
 
             if(x_13 - x_12 > 0) I1 = integral(x_12, x_13, f1, eps2);
             else I1 = integral(x_13, x_12, f1, eps2);
@@ -164,7 +165,7 @@ int main(int argc, char **argv)
             if(x_23 - x_13 > 0) I3 = integral(x_13, x_23, f3, eps2);
             else I3 = integral(x_23, x_13, f3, eps2);
 
-            printf("S = %lf", I2 + I3 - I1);
+            printf("S = %lf\n", I2 + I3 - I1);
         }
     }
     return 0;
